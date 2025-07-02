@@ -1,0 +1,103 @@
+<!-- ALLES WIE VORHER BIS ZUM SCRIPT-TAG -->
+<script>
+  const vocab = [
+    // 🎵 Ursprüngliche Song-Zeilen
+    { de: "Lass es sein", en: "Let it be" },
+    { de: "Sprich jetzt nicht", en: "Don’t speak now" },
+    { de: "Sag meinen Namen", en: "Say my name" },
+    { de: "Es ist mein Leben", en: "It's my life" },
+    { de: "Öffne deine Augen", en: "Open your eyes" },
+    { de: "Beweg deine Füße", en: "Move your feet" },
+    { de: "Spring jetzt herum", en: "Jump around now" },
+    { de: "Drück den Knopf", en: "Push the button" },
+    { de: "Komm rüber", en: "Come on over" },
+    { de: "Halte meine Hand", en: "Hold my hand" },
+    { de: "Mädchen wie ich", en: "Girl like me" },
+    { de: "Schüttle es ab", en: "Shake it off" },
+    { de: "Du brauchst Liebe", en: "You need love" },
+    { de: "Unter der Sonne", en: "Under the sun" },
+
+    // ➕ Neue einfache Sätze mit denselben Wörtern
+    { de: "Es ist Liebe", en: "It is love" },
+    { de: "Ich brauche dich", en: "I need you" },
+    { de: "Halte den Knopf", en: "Hold the button" },
+    { de: "Öffne deinen Namen", en: "Open your name" },
+    { de: "Meine Füße bewegen", en: "My feet move" },
+    { de: "Komm jetzt rüber", en: "Come over now" },
+    { de: "Es ist mein Name", en: "It is my name" },
+    { de: "Ich bin hier", en: "I am here" },
+    { de: "Du bist mein", en: "You are mine" },
+    { de: "Es ist kalt", en: "It is cold" },
+    { de: "Ich liebe dich", en: "I love you" },
+    { de: "Schüttle deine Füße", en: "Shake your feet" },
+    { de: "Drück meine Hand", en: "Push my hand" },
+    { de: "Spring unter Sonne", en: "Jump under sun" },
+    { de: "Meine Augen offen", en: "My eyes open" },
+    { de: "Du bist Liebe", en: "You are love" }
+  ];
+
+  let remainingWords = [];
+  let currentWord = null;
+  let score = 0;
+
+  function getDirection() {
+    return document.querySelector('input[name="direction"]:checked').value;
+  }
+
+  function updateCounter() {
+    const total = vocab.length;
+    const done = total - remainingWords.length;
+    document.getElementById("counter").innerText = `Aufgabe ${done + 1} von ${total}`;
+  }
+
+  function updateScore() {
+    document.getElementById("score").innerText = `Gelöst: ${score}`;
+  }
+
+  function pickWord() {
+    if (remainingWords.length === 0) {
+      document.getElementById("word").innerText = "🎉 Ende! Alle Sätze wurden gezeigt.";
+      document.getElementById("solution").innerHTML = `Gesamt gelöst: ${score} von ${vocab.length}.`;
+      document.getElementById("solutionBtn").style.display = "none";
+      return;
+    }
+
+    const direction = getDirection();
+    const index = Math.floor(Math.random() * remainingWords.length);
+    currentWord = remainingWords.splice(index, 1)[0];
+
+    document.getElementById("solution").innerText = "";
+    document.getElementById("word").innerText =
+      direction === "de-en" ? currentWord.de : currentWord.en;
+
+    document.getElementById("solutionBtn").disabled = false;
+    updateCounter();
+    updateScore();
+  }
+
+  function showSolution() {
+    if (!currentWord) return;
+    const direction = getDirection();
+    const solutionText = direction === "de-en" ? currentWord.en : currentWord.de;
+    document.getElementById("solution").innerHTML = `Lösung: ${solutionText}`;
+    score++;
+    document.getElementById("solutionBtn").disabled = true;
+    updateScore();
+    setTimeout(pickWord, 4000);
+  }
+
+  function startTrainer() {
+    remainingWords = [...vocab];
+    score = 0;
+    document.getElementById("solutionBtn").style.display = "inline-block";
+    document.getElementById("solution").innerText = "";
+    document.getElementById("word").innerText = "";
+    pickWord();
+  }
+
+  document.querySelectorAll('input[name="direction"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      startTrainer();
+    });
+  });
+</script>
